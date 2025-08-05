@@ -8,4 +8,4 @@ os.environ['HTTP_PROXY'] = proxy
 os.environ['HTTPS_PROXY'] = proxy
 
 # Run your Streamlit app
-os.system("streamlit run youtube_viewer.py")
+os.system("streamlit run youtubeviewer.py")
