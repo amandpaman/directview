@@ -1,45 +1,34 @@
 import streamlit as st
 from youtubesearchpython import VideosSearch
 
-st.set_page_config(page_title="📺 Embedded YouTube Viewer", layout="wide")
+# App Title
+st.title("🎬 YouTube Search + Embed (No API)")
 
-st.markdown("""
-    <style>
-        .block-container {
-            padding-top: 1rem;
-            padding-bottom: 1rem;
-            padding-left: 2rem;
-            padding-right: 2rem;
-        }
-        .stTextInput>div>div>input {
-            border-radius: 8px;
-            padding: 10px;
-            border: 1px solid #ccc;
-        }
-    </style>
-""", unsafe_allow_html=True)
+# Tab Layout
+tab1, tab2 = st.tabs(["🔍 Search by Keyword", "📺 Paste URL"])
 
-st.markdown("## 🔍 YouTube Viewer (Embedded Search)")
+# TAB 1: Search by Keyword
+with tab1:
+    st.subheader("Search YouTube Videos")
+    search_query = st.text_input("Enter a keyword (e.g., 'cute cats'):")
+    
+    if search_query:
+        st.write(f"🔎 Showing results for: **'{search_query}'**")
+        videos = VideosSearch(search_query, limit=5).result()["result"]
+        
+        for video in videos:
+            st.write(f"### {video['title']}")
+            st.video(video['link'])
+            st.markdown(f"📺 **Channel:** {video['channel']['name']} | ⏱️ **Duration:** {video['duration']}")
+            st.write("---")
 
-query = st.text_input("Search Videos", placeholder="e.g. relaxing music, Python tutorial")
-
-if query:
-    try:
-        results = VideosSearch(query, limit=5).result()['result']
-        for video in results:
-            title = video['title']
-            channel = video['channel']['name']
-            views = video['viewCount']['short']
-            published = video['publishedTime']
-            video_id = video['id']
-            embed_url = f"https://www.youtube.com/embed/{video_id}"
-
-            with st.container():
-                st.markdown(f"### {title}")
-                st.markdown(f"📺 **{channel}**  •  👁 {views}  •  🕓 {published}")
-                st.components.v1.iframe(embed_url, height=300)
-                st.markdown("---")
-
-    except Exception as e:
-        st.error("🚫 Error fetching videos. Check your proxy or internet.")
-        st.code(str(e))
+# TAB 2: Direct URL Embed
+with tab2:
+    st.subheader("Paste a YouTube URL")
+    video_url = st.text_input("Paste here (e.g., https://youtu.be/dQw4w9WgXcQ):")
+    
+    if video_url:
+        if "youtube.com" in video_url or "youtu.be" in video_url:
+            st.video(video_url)
+        else:
+            st.error("❌ Invalid YouTube URL. Try again!")
