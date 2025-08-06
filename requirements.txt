@@ -1,2 +1,3 @@
 streamlit
 request
+youtube-search-python
